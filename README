@@ -1,0 +1,18 @@
+This is a simple X11 utility that disables a tablet's touchscreen when the
+digitizer is near.
+
+It requires the XInput extension and its accompanying library.
+
+It's been developed and tested on a ThinkPad Yoga (first generation), which
+is what the input device names are configured for.
+
+A future revision will support naming devices via command line options, but
+for the time being they are compiled in. If you are using a different tablet,
+you may need to edit the values of PENDEVICE and/or TOUCHDEVICE in
+penxortouch.c. Hopefully these names are self-explanatory. The command
+xinput(1) will give you a list of the input devices available on your system.
+
+A future revision will also include a genuine man page. As it is, there are
+no run-time options. Simply run the program, penxortouch, and it will disable
+the touchscreen device whenever the pen device comes in proximity to the
+screen, and reenable the touchscreen when the pen leaves proximity.
