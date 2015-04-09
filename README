@@ -1,7 +1,8 @@
 This is a simple X11 utility that disables a tablet's touchscreen when the
 digitizer is near.
 
-It requires the XInput extension and its accompanying library.
+It requires the XInput extension and its accompanying library. On Debian, this
+is available in the package libxi-dev.
 
 It's been developed and tested on a ThinkPad Yoga (first generation), which
 is what the input device names are configured for.
