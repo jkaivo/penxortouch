@@ -23,6 +23,7 @@ SOFTWARE.
 
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include <X11/Xlib.h>
 #include <X11/extensions/XInput.h>
 #include <X11/Xatom.h>
@@ -31,6 +32,8 @@ SOFTWARE.
 #define TOUCHDEVICE	"ELAN Touchscreen"
 
 #define DEVPROP		"Device Enabled"
+
+#define USAGE		"Usage: %s [-h] [-p pen-device] [-t touch-device]\n"
 
 XDevice *
 open_dev(Display *dpy, const char *devname)
@@ -113,10 +116,41 @@ main(int argc, char **argv)
 {
 	XDevice *pen = NULL, *touch = NULL;
 	Display *dpy = NULL;
+	char *pendev = PENDEVICE, *touchdev = TOUCHDEVICE;
+	int opt;
+
+	while ((opt = getopt(argc, argv, "?hp:t:")) != -1) {
+		switch (opt) {
+		case 'p':
+			pendev = optarg;
+			break;
+		case 't':
+			touchdev = optarg;
+			break;
+		case 'h':
+			printf(USAGE, argv[0]);
+			printf("\n");
+			printf("  This command monitors a pen device for proxmity to the screen.\n");
+			printf("  When the pen device comes near, the touch device will be disabled.\n");
+			printf("  The touch device will be reenabled when the pen leaves the screen.\n");
+			printf("  The following options are available:\n");
+			printf("\n");
+			printf("  -h               Prints out this usage information and exits\n");
+			printf("  -p pen-device    Specifies the device to take precedence\n");
+			printf("                   (default: %s)\n", PENDEVICE);
+			printf("  -t touch-device  Specifies the device to be disabled\n");
+			printf("                   (default: %s)\n", TOUCHDEVICE);
+			printf("\n");
+			return 0;
+		default:
+			fprintf(stderr, USAGE, argv[0]);
+			return 1;
+		}
+	}
 
 	if ((dpy = open_display()) == NULL) goto error;
-	if ((pen = open_dev(dpy, PENDEVICE)) == NULL) goto error;
-	if ((touch = open_dev(dpy, TOUCHDEVICE)) == NULL) goto error;
+	if ((pen = open_dev(dpy, pendev)) == NULL) goto error;
+	if ((touch = open_dev(dpy, touchdev)) == NULL) goto error;
 	watch(dpy, pen, touch);
 
 	/* Only get here on error conditions */
